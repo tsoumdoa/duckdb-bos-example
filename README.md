@@ -4,7 +4,7 @@ A collection of **ready-to-use SQL queries** for exploring and analyzing **BIM O
 
 ## 📌 What is BIM Open Schema?
 
-[BIM Open Schema](https://github.com/BIMOpenSchema) is an **open, platform-independent specification** for representing Building Information Modeling (BIM) data in a format optimized for analytics.  
+[BIM Open Schema](https://github.com/ara3d/bim-open-schema) is an **open, platform-independent specification** for representing Building Information Modeling (BIM) data in a format optimized for analytics.  
 It’s designed for **columnar storage** (like Parquet) and works seamlessly with tools like DuckDB, Power BI, and Pandas.
 
 Typical workflow:
@@ -79,7 +79,7 @@ Navigate to the folder containing your **Parquet files** in the terminal.
 For example, if you unzipped the **Snowdon Towers Sample**:
 
 ```bash
-cd data/"Snowdon Towers Sample Architectural.parquet"
+cd <where_your_parquet_files_are>/"Snowdon Towers Sample Architectural.parquet"
 ```
 
 Then start DuckDB with the Web UI:
@@ -97,7 +97,7 @@ This will open a browser-based SQL editor connected to DuckDB.
 From the DuckDB Web UI (or CLI), run the `init.sql` script to load all Parquet files and create denormalized views:
 
 ```sql
-.read ../sql/init.sql
+.read ../../sql/init.sql
 ```
 
 The `init.sql` script will:
@@ -147,7 +147,3 @@ Or run any of the example queries in the `sql/` folder.
 ---
 
 💡 **Tip:** These queries are meant to be **copied, pasted, and adapted** — treat this repo as your BIM + DuckDB cheat sheet.
-
-
-
-

@@ -35,8 +35,7 @@ FROM
 	denorm_entities AS e1
 	RIGHT OUTER JOIN denorm_points_params AS ep1 ON ep1.Entity = e1.index
   LEFT OUTER JOIN denorm_descriptors AS dsp ON dsp."index" = ep1.Descriptor
-
 WHERE
 e1.category LIKE '%Tags'
 ORDER BY
-	e1.index; paramName.String;
+	e1.index; 
