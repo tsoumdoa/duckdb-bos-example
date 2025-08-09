@@ -43,17 +43,18 @@ WITH
 	level_across_models AS (
 		SELECT
 			name,
-			CASE
-				WHEN BOOL_AND (model_status = 'OK') THEN 'OK'
-				ELSE 'Uncoordinated'
-			END AS cord_status,
+			LIST (DISTINCT project_name) AS models,
 			LIST (
 				DISTINCT CASE
 					WHEN model_status = 'Wrong' THEN project_name
 				END
 			) AS wrong_models,
-			LIST (DISTINCT project_name) AS models,
+			LIST (DISTINCT elevation) AS elevations,
 			ref_elevation,
+			CASE
+				WHEN BOOL_AND (model_status = 'OK') THEN 'OK'
+				ELSE 'Uncoordinated level'
+			END AS cord_status
 		FROM
 			level_with_flags
 		GROUP BY
@@ -61,7 +62,15 @@ WITH
 			ref_elevation
 	)
 SELECT
-	*
+	name,
+	cord_status,
+	ref_elevation,
+	wrong_models,
+	CASE
+		WHEN cord_status = 'Uncoordinated level' THEN elevations
+		ELSE NULL
+	END AS mismatched_elevations,
+	models,
 FROM
 	level_across_models
 ORDER BY
