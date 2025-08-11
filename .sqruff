@@ -1,6 +1,6 @@
 [sqruff]
 dialect = duckdb 
-exclude_rules = AM01,AM02
+exclude_rules = AM04, AM05
 rules = all
 
 [sqruff:indentation]

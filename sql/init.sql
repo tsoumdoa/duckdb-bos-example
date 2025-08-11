@@ -318,3 +318,11 @@ AS
 select *
 from IntegerParameters
 LEFT OUTER JOIN denorm_descriptors On denorm_descriptors.index = IntegerParameters.Descriptor ;
+
+-- denormalize Entity Parameters
+CREATE OR REPLACE VIEW denorm_entity_params
+AS
+select *
+from EntityParameters
+LEFT OUTER JOIN denorm_descriptors On denorm_descriptors.index = EntityParameters.Descriptor
+LEFT outer join denorm_entities as de on de.index = EntityParameters.Value ;

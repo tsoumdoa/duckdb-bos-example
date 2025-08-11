@@ -34,7 +34,7 @@ wall_data AS (
       'rvt:Element:Location.EndPoint',
       'rvt:Element:Bounds.Min',
       'rvt:Element:Bounds.Max'
-    )
+    ),
 )
 
 SELECT

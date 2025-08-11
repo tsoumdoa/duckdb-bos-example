@@ -247,4 +247,3 @@ FROM
   grid_across_models
 ORDER BY
   name;
-name ;
