@@ -1,67 +1,106 @@
 -- .read ../../sql/init.sql
 -- list all levels	
 SELECT
-	p.index,
-	p.name,
-	round(r0.Value * 304.8, 0) AS elevation,
-	p.project_name,
+  p.index,
+  p.name,
+  p.project_name,
+  round(r0.value * 304.8, 0) AS elevation
 FROM
-	denorm_entities AS p
-	JOIN denorm_string_params AS r2 ON r2.Entity = p.index
-	JOIN denorm_double_params AS r0 ON r0.Entity = p.index
+  denorm_entities AS p
+  INNER JOIN denorm_string_params AS r2 ON p.index = r2.entity
+  INNER JOIN denorm_double_params AS r0 ON p.index = r0.entity
 WHERE
-	p.category LIKE 'Levels'
-	AND r0.Name LIKE 'Elevation'
+  p.category LIKE 'Levels'
+  AND r0.name LIKE 'Elevation'
 GROUP BY
-	p.name,
-	p.index,
-	p.project_name,
-	r0.Value
+  p.name,
+  p.index,
+  p.project_name,
+  r0.value
 ORDER BY
-	r0.Value DESC;
+  r0.value DESC;
 
 -- List all the grids 
 SELECT
-    e.index,
-    e.name,
-    dp2.Strings AS grid_type,
+  e.index,
+  e.name,
+  dp2.strings AS grid_type,
+  CASE
+    WHEN
+      max(CASE
+        WHEN dp1.name = 'rvt:Grid:StartPoint'
+          THEN round(dp1.x * 304.8, 0)
+      END)
+      = max(CASE
+        WHEN dp1.name = 'rvt:Grid:EndPoint'
+          THEN round(dp1.x * 304.8, 0)
+      END)
+      THEN 'y'
+    WHEN
+      max(CASE
+        WHEN dp1.name = 'rvt:Grid:StartPoint'
+          THEN round(dp1.y * 304.8, 0)
+      END)
+      = max(CASE
+        WHEN dp1.name = 'rvt:Grid:EndPoint'
+          THEN round(dp1.y * 304.8, 0)
+      END)
+      THEN 'x'
+    ELSE 'diagonal'
+  END AS grid_dir,
+
+  e.project_name,
+  max(
     CASE
-        WHEN MAX(CASE WHEN dp1.Name = 'rvt:Grid:StartPoint' 
-                      THEN ROUND(dp1.X * 304.8, 0) END)
-           = MAX(CASE WHEN dp1.Name = 'rvt:Grid:EndPoint' 
-                      THEN ROUND(dp1.X * 304.8, 0) END)
-        THEN 'y'
-        WHEN MAX(CASE WHEN dp1.Name = 'rvt:Grid:StartPoint' 
-                      THEN ROUND(dp1.Y * 304.8, 0) END)
-           = MAX(CASE WHEN dp1.Name = 'rvt:Grid:EndPoint' 
-                      THEN ROUND(dp1.Y * 304.8, 0) END)
-        THEN 'x'
-        ELSE 'diagonal'
-    END AS grid_dir,
-    
-    MAX(CASE WHEN dp1.Name = 'rvt:Grid:StartPoint' THEN round(dp1.X * 304.8, 0) END) AS start_x,
-    MAX(CASE WHEN dp1.Name = 'rvt:Grid:StartPoint' THEN round(dp1.Y * 304.8, 0) END) AS start_y,
-    MAX(CASE WHEN dp1.Name = 'rvt:Grid:EndPoint' THEN round(dp1.X * 304.8, 0) END) AS end_x,
-    MAX(CASE WHEN dp1.Name = 'rvt:Grid:EndPoint' THEN round(dp1.Y * 304.8, 0) END) AS end_y,
+      WHEN dp1.name = 'rvt:Grid:StartPoint' THEN round(dp1.x * 304.8, 0)
+    END
+  ) AS start_x,
+  max(
+    CASE
+      WHEN dp1.name = 'rvt:Grid:StartPoint' THEN round(dp1.y * 304.8, 0)
+    END
+  ) AS start_y,
+  max(
+    CASE
+      WHEN dp1.name = 'rvt:Grid:EndPoint' THEN round(dp1.x * 304.8, 0)
+    END
+  ) AS end_x,
 
-    MAX(CASE WHEN dp1.Name = 'rvt:Grid:CenterPoint' THEN round(dp1.X * 304.8, 0) END) AS center_x,
-    MAX(CASE WHEN dp1.Name = 'rvt:Grid:CenterPoint' THEN round(dp1.Y * 304.8, 0) END) AS center_y,
-    MAX(CASE WHEN dp1.Name = 'rvt:Grid:CenterPoint' THEN round(dp3.Value * 304.8, 0) END) AS arc_radius,
+  max(
+    CASE
+      WHEN dp1.name = 'rvt:Grid:EndPoint' THEN round(dp1.y * 304.8, 0)
+    END
+  ) AS end_y,
+  max(
+    CASE
+      WHEN dp1.name = 'rvt:Grid:CenterPoint' THEN round(dp1.x * 304.8, 0)
+    END
+  ) AS center_x,
+  max(
+    CASE
+      WHEN dp1.name = 'rvt:Grid:CenterPoint' THEN round(dp1.y * 304.8, 0)
+    END
+  ) AS center_y,
 
-    e.project_name,
+  max(
+    CASE
+      WHEN
+        dp1.name = 'rvt:Grid:CenterPoint'
+        THEN round(dp3.value * 304.8, 0)
+    END
+  ) AS arc_radius
 FROM
-    denorm_entities AS e
-    JOIN denorm_points_params AS dp1 ON dp1.Entity = e.index
-    JOIN denorm_string_params AS dp2 ON dp2.Entity = e.index
-    LEFT JOIN denorm_double_params AS dp3 ON dp3.Entity = e.index
+  denorm_entities AS e
+  INNER JOIN denorm_points_params AS dp1 ON e.index = dp1.entity
+  INNER JOIN denorm_string_params AS dp2 ON e.index = dp2.entity
+  LEFT JOIN denorm_double_params AS dp3 ON e.index = dp3.entity
 WHERE
-    e.category LIKE 'Grids'
-    AND dp2.Name LIKE 'rvt:Grid:Type'
+  e.category LIKE 'Grids'
+  AND dp2.name LIKE 'rvt:Grid:Type'
 GROUP BY
-    e.index,
-    e.name,
-    dp2.Strings,
-    e.project_name
+  e.index,
+  e.name,
+  dp2.strings,
+  e.project_name
 ORDER BY
-    e.Name;
-
+  e.name;

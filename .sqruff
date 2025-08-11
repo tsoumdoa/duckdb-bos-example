@@ -1,0 +1,9 @@
+[sqruff]
+dialect = duckdb 
+exclude_rules = AM01,AM02
+rules = all
+
+[sqruff:indentation]
+indent_unit = space
+tab_space_size = 2
+indented_joins = True
