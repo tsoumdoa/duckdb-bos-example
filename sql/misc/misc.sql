@@ -1,41 +1,40 @@
 SELECT
-  paramName.String AS paramName,
-  COUNT(*) AS count
+  PARAMNAME.STRING AS PARAMNAME,
+  COUNT(*) AS COUNT
 FROM
-  denorm_entities AS e
-LEFT OUTER JOIN
-  EntityParameters AS ep
-  ON e.index = ep.Entity
-LEFT OUTER JOIN
-  denorm_entities AS e2 
-  ON e2.index = ep.Value
-LEFT OUTER JOIN
-  Descriptors AS dsp
-  ON dsp."index" = ep.Descriptor
-LEFT OUTER JOIN
-  Strings AS paramName
-  ON paramName.index = dsp.Name
+  DENORM_ENTITIES AS E
+  LEFT OUTER JOIN
+    ENTITYPARAMETERS AS EP
+    ON E.INDEX = EP.ENTITY
+  LEFT OUTER JOIN
+    DENORM_ENTITIES AS E2
+    ON EP.VALUE = E2.INDEX
+  LEFT OUTER JOIN
+    DESCRIPTORS AS DSP
+    ON EP.DESCRIPTOR = DSP.INDEX
+  LEFT OUTER JOIN
+    STRINGS AS PARAMNAME
+    ON DSP.NAME = PARAMNAME.INDEX
 WHERE
-  e.category LIKE 'Walls'
+  E.CATEGORY LIKE 'Walls'
 GROUP BY
-  paramName.String
+  PARAMNAME.STRING
 ORDER BY
 
 -- select * from denorm_entities where category like '%Tags';
- SELECT 
---	e1.LocalId,
---	e1.GlobalId,
-e1.category,
-	e1.index,
-	e1.name,
-	e1.project_name,
-	e1.path_name,
-  ep1, dsp
+  SELECT E1.CATEGORY    --	e1.LocalId,
+  --	e1.GlobalId,
+  ,
+  E1.INDEX,
+  E1.NAME,
+  E1.PROJECT_NAME,
+  E1.PATH_NAME,
+  EP1, DSP
 FROM
-	denorm_entities AS e1
-	RIGHT OUTER JOIN denorm_points_params AS ep1 ON ep1.Entity = e1.index
-  LEFT OUTER JOIN denorm_descriptors AS dsp ON dsp."index" = ep1.Descriptor
+denorm_entities AS e1
+RIGHT OUTER JOIN denorm_points_params AS ep1 ON ep1.Entity = e1.index
+LEFT OUTER JOIN denorm_descriptors AS dsp ON dsp."index" = ep1.Descriptor
 WHERE
 e1.category LIKE '%Tags'
 ORDER BY
-	e1.index; 
+e1.index;
